@@ -1,20 +1,30 @@
-﻿namespace Loscialo_Intro_to_TDD
+﻿using System.Collections.Generic;
+
+namespace Loscialo_Intro_to_TDD
 {
-    public class BooleanExpression
+    public class BooleanExpression<T>
     {
-        public int Source { get; set; }
+        public T Source { get; set; }
 
-        public int Target { get; set; }
+        public T Target { get; set; }
 
-        public string Operator { get; set; }
+        public Operator Operator { get; set; }
 
         public bool Evaluate()
         {
-            if (Operator == "Equals")
+            var comparisonResult = Comparer<T>.Default.Compare(Source, Target);
+
+            switch(Operator)
             {
-                return Source == Target;
+                case Operator.Equals:
+                   return comparisonResult == 0;
+                case Operator.LessThan:
+                    return comparisonResult < 0;
+                case Operator.GreaterThan:
+                    return comparisonResult > 0;
+                default:
+                    return false;
             }
-            return false;
         }
     }
 }
