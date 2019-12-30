@@ -4,6 +4,8 @@
     {
         Equals,
         LessThan,
-        GreaterThan
+        GreaterThan,
+        And,
+        Or
     }
 }

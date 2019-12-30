@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooleanExpression.cs" />
+    <Compile Include="ExpressionGroup.cs" />
+    <Compile Include="IBooleanExpression.cs" />
     <Compile Include="Operator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

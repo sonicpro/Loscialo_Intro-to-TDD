@@ -2,7 +2,7 @@
 
 namespace Loscialo_Intro_to_TDD
 {
-    public class BooleanExpression<T>
+    public class BooleanExpression<T>: IBooleanExpression
     {
         public T Source { get; set; }
 
@@ -12,7 +12,7 @@ namespace Loscialo_Intro_to_TDD
 
         public bool Evaluate()
         {
-            var comparisonResult = Comparer<T>.Default.Compare(Source, Target);
+            int comparisonResult = Comparer<T>.Default.Compare(Source, Target);
 
             switch(Operator)
             {
