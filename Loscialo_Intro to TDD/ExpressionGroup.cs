@@ -1,16 +1,31 @@
-﻿namespace Loscialo_Intro_to_TDD
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Loscialo_Intro_to_TDD
 {
-    public class ExpressionGroup
+    public class ExpressionGroup: IBooleanExpression
     {
-        public IBooleanExpression Source { get; set; }
+        private readonly List<IBooleanExpression> clauses = new List<IBooleanExpression>();
 
-        public IBooleanExpression Target { get; set; }
+        public LogicOperator Operator { get; set; }
 
-        public Operator Operator { get; set; }
+        public void AddClause(IBooleanExpression clause)
+        {
+            clauses.Add(clause);
+        }
 
         public bool Evaluate()
         {
-            return Source.Evaluate() && Target.Evaluate();
+            switch (Operator)
+            {
+                case LogicOperator.And:
+                    return clauses.Aggregate(true, (result, current) => result && current.Evaluate());
+                case LogicOperator.Or:
+                    return clauses.Aggregate(false, (result, current) => result || current.Evaluate());
+                default:
+                    return false;
+            }
+            
         }
     }
 }

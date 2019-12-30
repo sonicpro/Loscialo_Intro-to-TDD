@@ -8,8 +8,10 @@ namespace Loscialo_Intro_to_TDDTest
     {
         private IBooleanExpression trueExpression1;
         private IBooleanExpression trueExpression2;
+        private IBooleanExpression trueExpression3;
         private IBooleanExpression falseExpression1;
         private IBooleanExpression falseExpression2;
+        private IBooleanExpression falseExpression3;
 
         [TestInitialize]
         public void Setup()
@@ -28,6 +30,13 @@ namespace Loscialo_Intro_to_TDDTest
                 Operator = Operator.GreaterThan
             };
 
+            trueExpression3 = new BooleanExpression<int>
+            {
+                Source = 1,
+                Target = 1,
+                Operator = Operator.Equals
+            };
+
             falseExpression1 = new BooleanExpression<int>
             {
                 Source = 1,
@@ -40,6 +49,13 @@ namespace Loscialo_Intro_to_TDDTest
                 Source = 1.701,
                 Target = 1.138,
                 Operator = Operator.LessThan
+            };
+
+            falseExpression3 = new BooleanExpression<int>
+            {
+                Source = 1,
+                Target = 2,
+                Operator = Operator.Equals
             };
         }
 
@@ -191,10 +207,11 @@ namespace Loscialo_Intro_to_TDDTest
         {
             var grouping = new ExpressionGroup
             {
-                Source = trueExpression1,
-                Target = trueExpression2,
-                Operator = Operator.And
+                Operator = LogicOperator.And
             };
+
+            grouping.AddClause(trueExpression1);
+            grouping.AddClause(trueExpression2);
 
             Assert.IsTrue(trueExpression1.Evaluate());
             Assert.IsTrue(trueExpression2.Evaluate());
@@ -206,10 +223,11 @@ namespace Loscialo_Intro_to_TDDTest
         {
             var grouping = new ExpressionGroup
             {
-                Source = trueExpression1,
-                Target = falseExpression1,
-                Operator = Operator.And
+                Operator = LogicOperator.And
             };
+
+            grouping.AddClause(trueExpression1);
+            grouping.AddClause(falseExpression1);
 
             Assert.IsTrue(trueExpression1.Evaluate());
             Assert.IsFalse(falseExpression1.Evaluate());
@@ -221,10 +239,11 @@ namespace Loscialo_Intro_to_TDDTest
         {
             var grouping = new ExpressionGroup
             {
-                Source = falseExpression1,
-                Target = trueExpression1,
-                Operator = Operator.And
+                Operator = LogicOperator.And
             };
+
+            grouping.AddClause(falseExpression1);
+            grouping.AddClause(trueExpression1);
 
             Assert.IsFalse(falseExpression1.Evaluate());
             Assert.IsTrue(trueExpression1.Evaluate());
@@ -236,14 +255,169 @@ namespace Loscialo_Intro_to_TDDTest
         {
             var grouping = new ExpressionGroup
             {
-                Source = falseExpression1,
-                Target = falseExpression2,
-                Operator = Operator.And
+                Operator = LogicOperator.And
             };
+
+            grouping.AddClause(falseExpression1);
+            grouping.AddClause(falseExpression2);
 
             Assert.IsFalse(falseExpression1.Evaluate());
             Assert.IsFalse(falseExpression2.Evaluate());
             Assert.IsFalse(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void TrueOrTrueIsTrue()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.Or
+            };
+
+            grouping.AddClause(trueExpression1);
+            grouping.AddClause(trueExpression2);
+
+            Assert.IsTrue(trueExpression1.Evaluate());
+            Assert.IsTrue(trueExpression2.Evaluate());
+            Assert.IsTrue(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void TrueOrFalseIsTrue()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.Or
+            };
+
+            grouping.AddClause(trueExpression1);
+            grouping.AddClause(falseExpression1);
+
+            Assert.IsTrue(trueExpression1.Evaluate());
+            Assert.IsFalse(falseExpression1.Evaluate());
+            Assert.IsTrue(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void FalseOrTrueIsTrue()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.Or
+            };
+
+            grouping.AddClause(falseExpression1);
+            grouping.AddClause(trueExpression1);
+
+            Assert.IsFalse(falseExpression1.Evaluate());
+            Assert.IsTrue(trueExpression1.Evaluate());
+            Assert.IsTrue(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void FalseOrFalseIsFalse()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.Or
+            };
+
+            grouping.AddClause(falseExpression1);
+            grouping.AddClause(falseExpression2);
+
+            Assert.IsFalse(falseExpression1.Evaluate());
+            Assert.IsFalse(falseExpression2.Evaluate());
+            Assert.IsFalse(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void TrueAndTrueAndTrueIsTrue()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.And
+            };
+
+            grouping.AddClause(trueExpression1);
+            grouping.AddClause(trueExpression2);
+            grouping.AddClause(trueExpression3);
+
+            Assert.IsTrue(trueExpression1.Evaluate());
+            Assert.IsTrue(trueExpression2.Evaluate());
+            Assert.IsTrue(trueExpression3.Evaluate());
+            Assert.IsTrue(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void TrueAndTrueAndFalseIsFalse()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.And
+            };
+
+            grouping.AddClause(trueExpression1);
+            grouping.AddClause(trueExpression2);
+            grouping.AddClause(falseExpression1);
+
+            Assert.IsTrue(trueExpression1.Evaluate());
+            Assert.IsTrue(trueExpression2.Evaluate());
+            Assert.IsFalse(falseExpression1.Evaluate());
+            Assert.IsFalse(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void FalseAndFalseAndFalseIsFalse()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.And
+            };
+
+            grouping.AddClause(falseExpression1);
+            grouping.AddClause(falseExpression2);
+            grouping.AddClause(falseExpression3);
+
+            Assert.IsFalse(falseExpression1.Evaluate());
+            Assert.IsFalse(falseExpression2.Evaluate());
+            Assert.IsFalse(falseExpression3.Evaluate());
+            Assert.IsFalse(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void TrueOrTrueOrTrueIsTrue()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.Or
+            };
+
+            grouping.AddClause(trueExpression1);
+            grouping.AddClause(trueExpression2);
+            grouping.AddClause(trueExpression3);
+
+            Assert.IsTrue(trueExpression1.Evaluate());
+            Assert.IsTrue(trueExpression2.Evaluate());
+            Assert.IsTrue(trueExpression3.Evaluate());
+            Assert.IsTrue(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void FalseOrFalseOrTrueIsTrue()
+        {
+            var grouping = new ExpressionGroup
+            {
+                Operator = LogicOperator.Or
+            };
+
+            grouping.AddClause(falseExpression1);
+            grouping.AddClause(falseExpression2);
+            grouping.AddClause(trueExpression1);
+
+            Assert.IsFalse(falseExpression1.Evaluate());
+            Assert.IsFalse(falseExpression2.Evaluate());
+            Assert.IsTrue(trueExpression1.Evaluate());
+            Assert.IsTrue(grouping.Evaluate());
         }
     }
 }
