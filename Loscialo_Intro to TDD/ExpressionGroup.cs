@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Loscialo_Intro_to_TDD
@@ -16,6 +17,10 @@ namespace Loscialo_Intro_to_TDD
 
         public bool Evaluate()
         {
+            if (clauses.Count == 0)
+            {
+                throw new InvalidOperationException("Boolean expression must contain at least one clause");
+            }
             switch (Operator)
             {
                 case LogicOperator.And:
@@ -25,7 +30,7 @@ namespace Loscialo_Intro_to_TDD
                 default:
                     return false;
             }
-            
+
         }
     }
 }

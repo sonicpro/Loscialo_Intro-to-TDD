@@ -1,5 +1,6 @@
 using Loscialo_Intro_to_TDD;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Loscialo_Intro_to_TDDTest
 {
@@ -418,6 +419,75 @@ namespace Loscialo_Intro_to_TDDTest
             Assert.IsFalse(falseExpression2.Evaluate());
             Assert.IsTrue(trueExpression1.Evaluate());
             Assert.IsTrue(grouping.Evaluate());
+        }
+
+        [TestMethod]
+        public void TruthfulCompoundStatementEvaluatesToTrue()
+        {
+            // Represents something like (A < B) OR (C > D) where either A < B or C > D or both of the statements are truthful.
+            var subGroup = new ExpressionGroup()
+            {
+                Operator = LogicOperator.Or
+            };
+
+            subGroup.AddClause(trueExpression1);
+            subGroup.AddClause(falseExpression1);
+
+            // Represents something like (<subGroup>) AND (y = z) where both <subGroup> and (y = z) evaluate to true.
+            var compound = new ExpressionGroup()
+            {
+                Operator = LogicOperator.And
+            };
+
+            compound.AddClause(subGroup);
+            compound.AddClause(trueExpression2);
+
+            Assert.IsTrue(trueExpression1.Evaluate());
+            Assert.IsFalse(falseExpression1.Evaluate());
+            Assert.IsTrue(subGroup.Evaluate());
+            Assert.IsTrue(trueExpression2.Evaluate());
+
+            Assert.IsTrue(compound.Evaluate());
+        }
+
+        [TestMethod]
+        public void FalseCompoundStatementEvaluatesToFalse()
+        {
+            // Represents something like (A < B) OR (C > D) where both A < B and C > D evaluate to false.
+            var subGroup = new ExpressionGroup()
+            {
+                Operator = LogicOperator.Or
+            };
+
+            subGroup.AddClause(falseExpression2);
+            subGroup.AddClause(falseExpression1);
+
+            // Represents something like (<subGroup>) AND (y = z) where <subGroup> evaluates to false and (y = z) evaluates to true.
+            var compound = new ExpressionGroup()
+            {
+                Operator = LogicOperator.And
+            };
+
+            compound.AddClause(subGroup);
+            compound.AddClause(trueExpression2);
+
+            Assert.IsFalse(falseExpression2.Evaluate());
+            Assert.IsFalse(falseExpression1.Evaluate());
+            Assert.IsFalse(subGroup.Evaluate());
+            Assert.IsTrue(trueExpression2.Evaluate());
+
+            Assert.IsFalse(compound.Evaluate());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException), "BooleanExpression must throw if it does not contain any clauses.")]
+        public void BooleanExpressionMustTrowIfThereAreNoClausesToEvaluate()
+        {
+            var booleanLogicStatement = new ExpressionGroup()
+            {
+                Operator = LogicOperator.And
+            };
+            booleanLogicStatement.Evaluate();
         }
     }
 }
